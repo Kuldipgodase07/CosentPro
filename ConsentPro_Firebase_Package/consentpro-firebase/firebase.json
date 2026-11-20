@@ -1,0 +1,19 @@
+{
+  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json", "location": "asia-south1" },
+  "functions": [{ "source": "functions", "codebase": "default", "runtime": "nodejs20" }],
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      { "source": "**", "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+      ] }
+    ]
+  },
+  "emulators": {
+    "auth": { "port": 9099 }, "firestore": { "port": 8080 }, "functions": { "port": 5001 },
+    "hosting": { "port": 5000 }, "ui": { "enabled": true }
+  }
+}

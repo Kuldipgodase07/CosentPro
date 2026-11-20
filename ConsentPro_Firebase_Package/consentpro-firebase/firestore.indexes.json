@@ -1,0 +1,7 @@
+{
+  "indexes": [
+    { "collectionGroup": "requests", "queryScope": "COLLECTION", "fields": [ { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "due", "order": "ASCENDING" } ] },
+    { "collectionGroup": "ledger", "queryScope": "COLLECTION", "fields": [ { "fieldPath": "seq", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}

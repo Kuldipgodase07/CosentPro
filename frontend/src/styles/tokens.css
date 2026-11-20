@@ -1,0 +1,141 @@
+/* ==========================================================================
+   ConsentPro Design Tokens & Theming
+   Palette: The six supplied gradient colours only; tints are mixes of them.
+   ========================================================================== */
+:root {
+  --c-mist: #F2E6EE;
+  --c-pink: #FFCCF2;
+  --c-lilac: #977DFF;
+  --c-blue: #0033FF;
+  --c-deep: #0600AB;
+  --c-night: #00033D;
+  --f: 'Google Sans Flex', 'Google Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bg: var(--c-mist);
+  --surface: color-mix(in srgb, var(--c-mist) 42%, #fff);
+  --surface-2: color-mix(in srgb, var(--c-mist) 78%, var(--c-lilac));
+  --ink: var(--c-night);
+  --ink-2: color-mix(in srgb, var(--c-night) 66%, var(--c-mist));
+  --line: color-mix(in srgb, var(--c-night) 13%, var(--c-mist));
+  --accent: var(--c-blue);
+  --accent-ink: var(--c-mist);
+  --accent-soft: color-mix(in srgb, var(--c-lilac) 24%, var(--c-mist));
+  --hi: var(--c-pink);
+  --hi-ink: var(--c-night);
+  --chart-a: var(--c-blue);
+  --chart-b: var(--c-night);
+  --focus: var(--c-deep);
+  --r: 16px;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--c-night);
+    --surface: color-mix(in srgb, var(--c-night) 84%, var(--c-deep));
+    --surface-2: color-mix(in srgb, var(--c-night) 66%, var(--c-deep));
+    --ink: var(--c-mist);
+    --ink-2: color-mix(in srgb, var(--c-mist) 68%, var(--c-night));
+    --line: color-mix(in srgb, var(--c-lilac) 24%, var(--c-night));
+    --accent: var(--c-lilac);
+    --accent-ink: var(--c-night);
+    --accent-soft: color-mix(in srgb, var(--c-lilac) 20%, var(--c-night));
+    --chart-a: var(--c-lilac);
+    --chart-b: var(--c-pink);
+    --focus: var(--c-pink);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: var(--c-night);
+  --surface: color-mix(in srgb, var(--c-night) 84%, var(--c-deep));
+  --surface-2: color-mix(in srgb, var(--c-night) 66%, var(--c-deep));
+  --ink: var(--c-mist);
+  --ink-2: color-mix(in srgb, var(--c-mist) 68%, var(--c-night));
+  --line: color-mix(in srgb, var(--c-lilac) 24%, var(--c-night));
+  --accent: var(--c-lilac);
+  --accent-ink: var(--c-night);
+  --accent-soft: color-mix(in srgb, var(--c-lilac) 20%, var(--c-night));
+  --chart-a: var(--c-lilac);
+  --chart-b: var(--c-pink);
+  --focus: var(--c-pink);
+  color-scheme: dark;
+}
+
+[hidden]:not([hidden=until-found i]) {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.ic {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.mono {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}

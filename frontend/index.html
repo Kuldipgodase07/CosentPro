@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="claude:viewport-fit-sides" content="cover">
+  <meta name="theme-color" content="#F2E6EE">
+  <meta name="description" content="ConsentPro - Enterprise Privacy and Consent Management Platform built for India's DPDP Act 2023 and GDPR">
+  <title>ConsentPro</title>
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@200..600&display=swap">
+  
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/analytics": "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js",
+      "firebase/functions": "https://www.gstatic.com/firebasejs/10.14.1/firebase-functions.js"
+    }
+  }
+  </script>
+  <script type="module" src="/firebase-config.js"></script>
+</head>
+<body>
+  <!-- Root Mount Point for Dynamic SPA Application -->
+  <div id="root"></div>
+
+  <!-- Interactive Overlays & Portals -->
+  <div id="modal" class="scrim" hidden></div>
+  <div id="pop" hidden></div>
+  <div id="cmd" class="cmd" hidden></div>
+  <div id="drawer" class="drawer" hidden></div>
+  <div id="toast" class="toast" hidden role="status"></div>
+
+  <!-- Main ES Module Entry Point -->
+  <script type="module" src="/src/index.js"></script>
+</body>
+</html>

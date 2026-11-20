@@ -1,0 +1,423 @@
+/* ==========================================================================
+   v5 AI Studio, Firebase Platform, Firestore Console & Security Rules
+   ========================================================================== */
+.ncard {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  background: var(--surface);
+}
+.ncard dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 14px;
+  margin: 10px 0 6px;
+  font-size: 14px;
+}
+.ncard dt {
+  color: var(--ink-2);
+}
+.ncard dd {
+  margin: 0;
+  font-weight: 500;
+}
+.chk {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.chk:first-child {
+  border-top: 0;
+}
+.chk small {
+  display: block;
+  color: var(--ink-2);
+  font-size: 13px;
+  margin-top: 2px;
+}
+.scorebig {
+  font-size: 48px;
+  font-weight: 200;
+  letter-spacing: -.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+.scorebig small {
+  font-size: 16px;
+  color: var(--ink-2);
+}
+.olist {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  font-size: 14.5px;
+}
+.advs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.steps2 {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+}
+.steps2 li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.steps2 .ic {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+  flex: none;
+  margin-top: 3px;
+}
+.num2 {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  font-size: 13px;
+}
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.flow .fl {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--surface);
+  display: grid;
+  gap: 4px;
+}
+.flow .fl i {
+  font-style: normal;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+.flow small {
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+/* architecture svg diagram */
+.archw {
+  overflow-x: auto;
+  margin-top: 6px;
+}
+.arch {
+  width: 100%;
+  min-width: 760px;
+  height: auto;
+}
+.arch .ab rect {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1.3;
+}
+.arch .ab.fb rect {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+.arch .ab.ai rect {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+.arch .ab.pl rect {
+  stroke-dasharray: 5 4;
+}
+.arch .in {
+  fill: var(--surface) !important;
+  stroke: var(--line) !important;
+}
+.arch .note {
+  fill: none;
+  stroke: var(--line);
+  stroke-dasharray: 3 4;
+}
+.arch .t1 {
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.arch .t2 {
+  font-size: 11.5px;
+  fill: var(--ink-2);
+}
+.arch .t3 {
+  font-size: 12px;
+  fill: var(--ink);
+}
+.arch .ab.ai .t1, .arch .ab.ai .t2 {
+  fill: var(--accent-ink);
+}
+.arch .lab {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  fill: var(--ink-2);
+}
+.arch .ar {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.arch .ahp {
+  fill: var(--ink);
+}
+
+/* firestore console simulator */
+.fsstats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+.fst {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--surface);
+}
+.fst b {
+  display: block;
+  font-size: 22px;
+  font-weight: 300;
+}
+.fst small {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.fsw {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr);
+  gap: 12px;
+}
+.fscol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.fsb {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 0;
+  background: none;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-size: 12.5px;
+  min-width: 0;
+}
+.fsb span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fsb .ic {
+  width: 15px;
+  height: 15px;
+  color: var(--ink-2);
+  flex: none;
+}
+.fsb em {
+  font-style: normal;
+  font-size: 11px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  padding: 1px 8px;
+}
+.fsb:hover {
+  background: var(--surface-2);
+}
+.fsb.on {
+  background: var(--accent-soft);
+}
+.fsdocs {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.fsd {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.fsd summary {
+  padding: 9px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.fsd pre.code {
+  border-radius: 0 0 12px 12px;
+  max-height: 240px;
+}
+.ops {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+  max-height: 560px;
+  overflow: auto;
+}
+.op {
+  display: grid;
+  grid-template-columns: 62px 54px minmax(0, 1fr) auto;
+  gap: 8px;
+  font-size: 11.5px;
+  padding: 6px 4px;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+.op:first-child {
+  border-top: 0;
+}
+.op b {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: .04em;
+}
+.op em {
+  font-style: normal;
+  color: var(--ink-2);
+}
+.o-set, .o-seed { color: var(--accent); }
+.o-auth, .o-call { color: var(--ink); }
+.o-update { color: var(--ink-2); }
+.svc {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+}
+.svc small {
+  display: block;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+.simout {
+  margin-top: 12px;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.simout b {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.simout.ok {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.simout.no {
+  background: var(--hi);
+  color: var(--hi-ink);
+}
+.rules {
+  background: var(--c-night);
+  color: var(--c-mist);
+  border-radius: 14px;
+  padding: 10px 0;
+  max-height: 640px;
+  overflow: auto;
+  font: 12px/1.6 ui-monospace, Menlo, Consolas, monospace;
+}
+.rl {
+  display: flex;
+  gap: 12px;
+  padding: 0 12px;
+  white-space: pre;
+}
+.rl i {
+  font-style: normal;
+  color: rgba(242, 230, 238, .4);
+  min-width: 24px;
+  text-align: right;
+}
+.rl.hl {
+  background: color-mix(in srgb, var(--c-lilac) 38%, transparent);
+}
+.rub {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+.rb {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.rb:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.rbw b {
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: -.03em;
+}
+.rbw i {
+  display: block;
+  height: 6px;
+  border-radius: 9px;
+  background: var(--accent);
+  margin-top: 6px;
+  max-width: 100%;
+}
+.rb p {
+  color: var(--ink-2);
+  margin: 6px 0 10px;
+  font-size: 14px;
+  max-width: 70ch;
+}
+
+@media (max-width: 1060px) {
+  .advs { grid-template-columns: minmax(0, 1fr); }
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .fsw, .rb { grid-template-columns: minmax(0, 1fr); }
+  .fsstats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .chk { grid-template-columns: minmax(0, 1fr); }
+  .flow { grid-template-columns: minmax(0, 1fr); }
+}
