@@ -222,7 +222,7 @@ export function landing() {
       <div class="wrap">
         <div>
           <span class="tag"><i></i>DPDP Act 2023 Aligned</span>
-          <h1>Consent people can <b>see, change</b> and you can <b>prove</b>.</h1>
+          <h1>Verifiable Consent.<br>Built for the <b>DPDP Act 2023</b>.</h1>
           <p class="lead">One place for every person to manage what they agreed to. An SDK, an API and a tamper-evident audit trail for the teams that must answer to a regulator.</p>
           <div class="row" style="margin-top:32px">
             <button class="btn btn--r btn--xl" data-go="signup">Start free</button>
