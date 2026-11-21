@@ -272,25 +272,115 @@ body::before {
 }
 
 /* rail mode (collapsed sidebar) */
-.app.rail .sb {
-  padding: 16px 8px;
+.app.rail {
+  grid-template-columns: 78px minmax(0, 1fr);
 }
-.app.rail .brand span:not(.logo),
-.app.rail .tenant div,
-.app.rail .secl,
-.app.rail .nav span,
-.app.rail .sys span,
-.app.rail .ucard div,
-.app.rail .ucard .ic:last-child {
+.app.rail .sb {
+  width: 78px;
+  padding: 16px 8px;
+  align-items: center;
+  overflow-x: hidden;
+}
+.app.rail .sb-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+}
+.app.rail .sb-top .brand {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+.app.rail .sb-top .brand span {
   display: none !important;
 }
-.app.rail .nav {
-  justify-content: center;
-  padding: 10px;
+.app.rail .sb-top button {
+  margin: 0 auto;
 }
 .app.rail .tenant {
   justify-content: center;
+  padding: 8px 4px;
+  width: 100%;
+}
+.app.rail .tenant div {
+  display: none !important;
+}
+.app.rail .tenant .av {
+  margin: 0 auto;
+}
+.app.rail .secl {
+  display: block;
+  height: 1px;
+  background: var(--line);
+  padding: 0;
+  margin: 10px 4px;
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+  width: calc(100% - 8px);
+  overflow: hidden;
+}
+.app.rail .nav {
+  justify-content: center;
+  padding: 10px 0;
+  width: 100%;
+  position: relative;
+}
+.app.rail .nav span:not(.badge) {
+  display: none !important;
+}
+.app.rail .nav svg,
+.app.rail .nav .ic {
+  margin: 0 auto;
+}
+.app.rail .nav .badge {
+  position: absolute;
+  top: 3px;
+  right: 10px;
+  margin: 0;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 999px;
+}
+.app.rail .sb-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.app.rail .sys {
+  justify-content: center;
   padding: 6px;
+  width: 100%;
+}
+.app.rail .sys span {
+  display: none !important;
+}
+.app.rail .sys i {
+  margin: 0 auto;
+}
+.app.rail .ucard {
+  justify-content: center;
+  padding: 6px 4px;
+  width: 100%;
+}
+.app.rail .ucard div,
+.app.rail .ucard svg,
+.app.rail .ucard .ic {
+  display: none !important;
+}
+.app.rail .ucard .av {
+  margin: 0 auto;
 }
 
 /* topbar inside content */
