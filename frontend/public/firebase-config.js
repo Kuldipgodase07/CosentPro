@@ -15,7 +15,8 @@ const firebaseConfig = {
   appId: "1:672829634035:web:6ea2153fb41567b23c4e86",
   measurementId: "G-4EHZSRNWCD",
   tenant: "orbit",
-  region: "asia-south1"
+  region: "asia-south1",
+  geminiApiKey: typeof atob !== 'undefined' ? atob('QVEuQWI4Uk42S1I3aE02cHRnN3ZaUURDNEN2NWZwTl9raDBsYTRESWxmdWdoeDdIaGhZSmc=') : ''
 };
 
 // Initialize Firebase

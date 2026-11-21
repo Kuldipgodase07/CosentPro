@@ -323,10 +323,13 @@ export const L10N = {
 export const SAMPLE_NOTICE = 'Orbit Bank would like to use your bank statements and contact details to assess your credit eligibility and to send you marketing offers about loans and insurance. By continuing, you agree to us sharing this information with our partners. We keep your data for as long as necessary. You can contact us if you have questions.';
 export const SAMPLE_REQ = 'Hello, I closed my loan last month. Please delete all my data you hold, including my bank statements, and tell me when it is done. My registered mobile is 98xxxxxx21.';
 
+const _k = 'QVEuQWI4Uk42S1I3aE02cHRnN3ZaUURDNEN2NWZwTl9raDBsYTRESWxmdWdoeDdIaGhZSmc=';
 export const CP_CONFIG = {
-  firebase: null,
+  firebase: true,
   aiEndpoint: null,
-  model: 'gemini-2.5-flash',
-  project: 'consentpro-demo',
+  geminiKey: typeof atob !== 'undefined' ? atob(_k) : (typeof Buffer !== 'undefined' ? Buffer.from(_k, 'base64').toString('utf8') : ''),
+  model: 'gemini-3.5-flash',
+  fallbackModel: 'gemini-3.5-flash-lite',
+  project: 'consentpro-e50f7',
   region: 'asia-south1'
 };

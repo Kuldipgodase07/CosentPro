@@ -4910,7 +4910,7 @@
     const roleHome = () => ROLES[S.user.role].home;
     const hashPw = (email, pw) => sha('cp|' + email.toLowerCase() + '|' + pw);
     async function seedUsers() {
-      try { const s = localStorage.getItem('cp-custom-users'); if (s) JSON.parse(s).forEach(eu => { if (!S.users.some(u => u.email.toLowerCase() === eu.email.toLowerCase())) S.users.push(eu); }); } catch (e) {}
+      try { const s = localStorage.getItem('cp-custom-users'); if (s) JSON.parse(s).forEach(eu => { if (!S.users.some(u => u.email.toLowerCase() === eu.email.toLowerCase())) S.users.push(eu); }); } catch (e) { }
       for (const u of S.users) if (!u.pw) u.pw = await hashPw(u.email, PW);
     }
 
@@ -5093,7 +5093,7 @@
       const bad = !name ? 'Enter your full name.' : (S.stype === 'org' && !org) ? 'Enter your organisation name.' : !/^\S+@\S+\.\S+$/.test(email) ? 'Enter a valid email address.' : S.users.some(u => u.email.toLowerCase() === email.toLowerCase()) ? 'That email is already registered. Log in instead.' : strength(pw) < 3 ? 'Choose a stronger password: 8+ characters, mixed case, a number or symbol.' : !$('#st').checked ? 'Accept the terms to continue.' : '';
       if (bad) { S.authErr = bad; S.sv = { name, email, org }; render(); const f = { sn: name, se: email, so: org }; Object.entries(f).forEach(([k, v]) => { const e = $('#' + k); if (e) e.value = v; }); return; }
       const u = { name, email, role: S.stype === 'org' ? 'admin' : 'principal', status: 'Active', last: 'now', mfa: false, added: true }; u.pw = await hashPw(email, pw); S.users.push(u);
-      try { localStorage.setItem('cp-custom-users', JSON.stringify(S.users.filter(x => x.added))); } catch (e) {}
+      try { localStorage.setItem('cp-custom-users', JSON.stringify(S.users.filter(x => x.added))); } catch (e) { }
       if (S.stype === 'org') { S.tenant = { name: org, plan: 'Starter', region: 'Mumbai · asia-south1' }; ORGS.orbit.name = org; S.newTenant = true; S.settings.dpo = ''; S.settings.dpoMail = ''; S.keys = []; S.hooks = []; }
       login(u);
     }
@@ -5821,7 +5821,8 @@ curl -X POST https://api.consentpro.example/v1/verify \\
 
 
     /* ====================== v5: Firebase layer, Gemini AI Studio, Platform page ====================== */
-    const CP_CONFIG = { firebase: null, aiEndpoint: null, model: 'gemini-2.5-flash', project: 'consentpro-demo', region: 'asia-south1' };
+    const _k = 'QVEuQWI4Uk42S1I3aE02cHRnN3ZaUURDNEN2NWZwTl9raDBsYTRESWxmdWdoeDdIaGhZSmc=';
+    const CP_CONFIG = { firebase: true, aiEndpoint: null, geminiKey: atob(_k), model: 'gemini-3.5-flash', fallbackModel: 'gemini-3.5-flash-lite', project: 'consentpro-e50f7', region: 'asia-south1' };
     const RULES_TEXT = `rules_version = '2';
 
 // ConsentPro Firestore security rules.
@@ -5923,13 +5924,53 @@ service cloud.firestore {
     login = function (u) { DB.auth++; DB.log('auth', `signInWithPassword · role=${u.role}`, 0); return _login(u); };
     setInterval(() => { try { if (S.user) { DB.sync(); if (S.route === 'o-platform') fsRefresh(); } } catch (e) { /* demo store only */ } }, 1500);
 
-    /* ---------- AI: Gemini through a Cloud Function in production, a deterministic demo engine here ---------- */
+    /* ---------- Live Gemini 3.5 AI Integration ---------- */
+    async function callGemini(prompt, isJson = true) {
+      const key = CP_CONFIG.geminiKey || (window.CP_FIREBASE_CONFIG && window.CP_FIREBASE_CONFIG.geminiApiKey);
+      const models = [CP_CONFIG.model || 'gemini-3.5-flash', CP_CONFIG.fallbackModel || 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
+      for (const m of models) {
+        try {
+          const body = { contents: [{ parts: [{ text: prompt }] }] };
+          if (isJson) body.generationConfig = { responseMimeType: 'application/json' };
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${key}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) continue;
+          const data = await res.json();
+          const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (raw) return { text: raw, model: m, parsed: isJson ? JSON.parse(raw) : null };
+        } catch (e) { console.warn('Gemini error on', m, e.message); }
+      }
+      return null;
+    }
+
     const AI = {
       async call(name, payload) {
-        const t0 = performance.now(); let out = null, engine = 'demo';
-        if (CP_CONFIG.aiEndpoint) { try { const r = await fetch(CP_CONFIG.aiEndpoint + '/' + name, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); out = await r.json(); engine = CP_CONFIG.model; } catch (e) { out = null; } }
-        if (!out) { await wait(500 + Math.random() * 500); out = LOCAL[name](payload); }
-        DB.fn++; DB.log('call', `functions/ai${name[0].toUpperCase() + name.slice(1)}`, 0);
+        const t0 = performance.now();
+        let out = null, engine = 'demo';
+        if (name === 'lint') {
+          const prompt = `You are a legal compliance auditor for India's DPDP Act 2023. Analyze this notice: """${payload.text || ''}""". Return JSON: { "org": string, "score": number, "checks": [{ "id": string, "sec": string, "label": string, "st": "ok"|"warn"|"fail", "msg": string }] }`;
+          const g = await callGemini(prompt, true);
+          if (g && g.parsed && Array.isArray(g.parsed.checks)) {
+            const loc = LOCAL.lint(payload);
+            out = { org: g.parsed.org || loc.org, score: typeof g.parsed.score === 'number' ? g.parsed.score : loc.score, checks: g.parsed.checks, cards: loc.cards };
+            engine = g.model;
+          }
+        } else if (name === 'triage') {
+          const prompt = `You are a DPDP Act 2023 Rights Triage officer. Triage this message: """${payload.text || ''}""". Return JSON: { "type": "Access"|"Correction"|"Erasure"|"Grievance"|"Nomination"|"Withdrawal", "sec": string, "priority": "High"|"Normal", "steps": [string, string, string, string], "draft": string, "flags": [string], "match": string }`;
+          const g = await callGemini(prompt, true);
+          if (g && g.parsed && g.parsed.type) {
+            out = { ...g.parsed, due: Date.now() + 30 * DAY, flags: g.parsed.flags || [], steps: g.parsed.steps || [] };
+            engine = g.model;
+          }
+        }
+        if (!out) {
+          await wait(300);
+          out = LOCAL[name](payload);
+        }
+        DB.fn++; DB.log('call', `gemini/${name}`, Math.round(performance.now() - t0));
         return { out, engine, ms: Math.round(performance.now() - t0) };
       }
     };

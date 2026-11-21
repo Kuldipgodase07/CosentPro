@@ -471,7 +471,7 @@ document.addEventListener('click', async ev => {
       return render();
     }
     case 'chip':
-      handleChat(d.t);
+      await handleChat(d.t, render);
       return render();
     case 'chat-pick':
       stage(byId(id), d.do);
@@ -708,7 +708,8 @@ document.addEventListener('submit', async e => {
   if (id === 'chatform') {
     const i = $('#chatin'), x = i?.value.trim();
     if (x) {
-      handleChat(x);
+      if (i) i.value = '';
+      await handleChat(x, render);
       render();
       $('#chatin')?.focus();
     }
