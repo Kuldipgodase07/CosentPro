@@ -221,7 +221,7 @@ export function landing() {
       <div class="grid"></div>
       <div class="wrap">
         <div>
-          <span class="tag"><i></i>DPDP Rules 2025 · ${d1} days to full enforcement</span>
+          <span class="tag"><i></i>DPDP Act 2023 Aligned</span>
           <h1>Consent people can <b>see, change</b> and you can <b>prove</b>.</h1>
           <p class="lead">One place for every person to manage what they agreed to. An SDK, an API and a tamper-evident audit trail for the teams that must answer to a regulator.</p>
           <div class="row" style="margin-top:32px">
