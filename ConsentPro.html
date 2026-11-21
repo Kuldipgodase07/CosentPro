@@ -4905,7 +4905,10 @@
     const notify = (to, t) => { S.notifs.unshift({ id: Date.now() + Math.random(), to, t, ts: Date.now(), un: true }); };
     const roleHome = () => ROLES[S.user.role].home;
     const hashPw = (email, pw) => sha('cp|' + email.toLowerCase() + '|' + pw);
-    async function seedUsers() { for (const u of S.users) u.pw = await hashPw(u.email, PW); }
+    async function seedUsers() {
+      try { const s = localStorage.getItem('cp-custom-users'); if (s) JSON.parse(s).forEach(eu => { if (!S.users.some(u => u.email.toLowerCase() === eu.email.toLowerCase())) S.users.push(eu); }); } catch (e) {}
+      for (const u of S.users) if (!u.pw) u.pw = await hashPw(u.email, PW);
+    }
 
     function go(r) {
       if (!PUBLIC.includes(r) && !R[r]) r = S.user ? roleHome() : 'home';
@@ -5086,6 +5089,7 @@
       const bad = !name ? 'Enter your full name.' : (S.stype === 'org' && !org) ? 'Enter your organisation name.' : !/^\S+@\S+\.\S+$/.test(email) ? 'Enter a valid email address.' : S.users.some(u => u.email.toLowerCase() === email.toLowerCase()) ? 'That email is already registered. Log in instead.' : strength(pw) < 3 ? 'Choose a stronger password: 8+ characters, mixed case, a number or symbol.' : !$('#st').checked ? 'Accept the terms to continue.' : '';
       if (bad) { S.authErr = bad; S.sv = { name, email, org }; render(); const f = { sn: name, se: email, so: org }; Object.entries(f).forEach(([k, v]) => { const e = $('#' + k); if (e) e.value = v; }); return; }
       const u = { name, email, role: S.stype === 'org' ? 'admin' : 'principal', status: 'Active', last: 'now', mfa: false, added: true }; u.pw = await hashPw(email, pw); S.users.push(u);
+      try { localStorage.setItem('cp-custom-users', JSON.stringify(S.users.filter(x => x.added))); } catch (e) {}
       if (S.stype === 'org') { S.tenant = { name: org, plan: 'Starter', region: 'Mumbai · asia-south1' }; ORGS.orbit.name = org; S.newTenant = true; S.settings.dpo = ''; S.settings.dpoMail = ''; S.keys = []; S.hooks = []; }
       login(u);
     }

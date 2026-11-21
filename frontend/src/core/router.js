@@ -130,6 +130,9 @@ export function go(r) {
     r = 'login';
   }
   if ((r === 'login' || r === 'signup') && S.user) r = roleHome();
+  if (r === 'login' || r === 'signup') {
+    S.authErr = '';
+  }
   S.route = r;
   S.drawerOpen = false;
   if (location.hash !== '#' + r) {

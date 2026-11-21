@@ -29,8 +29,22 @@ import { simHTML, rulesHTML, fsHTML, opsHTML, fsStats, fsRefresh } from './views
 
 /* ---------- auth logic ---------- */
 export async function seedUsers() {
+  try {
+    const saved = localStorage.getItem('cp-custom-users');
+    if (saved) {
+      const extra = JSON.parse(saved);
+      for (const eu of extra) {
+        if (!S.users.some(u => u.email.toLowerCase() === eu.email.toLowerCase())) {
+          S.users.push(eu);
+        }
+      }
+    }
+  } catch (e) {}
+
   for (const u of S.users) {
-    u.pw = await hashPw(u.email, PW);
+    if (!u.pw) {
+      u.pw = await hashPw(u.email, PW);
+    }
   }
 }
 
@@ -97,6 +111,11 @@ export async function doSignup() {
   };
   u.pw = await hashPw(email, pw);
   S.users.push(u);
+
+  try {
+    const custom = S.users.filter(x => x.added);
+    localStorage.setItem('cp-custom-users', JSON.stringify(custom));
+  } catch (e) {}
 
   if (S.stype === 'org') {
     S.tenant = { name: org, plan: 'Starter', region: 'Mumbai · asia-south1' };
@@ -681,7 +700,8 @@ document.addEventListener('submit', async e => {
   if (id === 'loginform') return doLogin(v('le'), ($('#lp')?.value || '').trim());
   if (id === 'signupform') return doSignup();
   if (id === 'mfaform') {
-    if (v('code') === '482913') return login(S.mfa);
+    const code = ($('#code')?.value || $$('.od').map(x => x.value).join('')).trim();
+    if (code === '482913') return login(S.mfa);
     S.authErr = 'That code is not right. Use 482913 in this demo.';
     return render();
   }
