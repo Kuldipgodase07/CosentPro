@@ -1619,10 +1619,9 @@ function landing() {
       <h1>Consent people can <b>see, change</b> and you can <b>prove</b>.</h1>
       <p class="lead">One place for every person to manage what they agreed to. An SDK, an API and a tamper-evident audit trail for the teams that must answer to a regulator.</p>
       <div class="row" style="margin-top:32px"><button class="btn btn--r btn--xl" data-go="signup">Start free</button><button class="btn btn--ghost btn--xl" data-go="login">Explore the live demo</button></div>
-      <div class="badges"><span>${ic('shield')}DPDP Act 2023</span><span>${ic('globe')}GDPR aligned</span><span>${ic('lock')}India data residency</span><span>${ic('ledger')}Hash-chained audit</span></div></div>
+      <div class="badges"><span>${ic('shield')}DPDP Act 2023</span><span>${ic('globe')}GDPR aligned</span><span>${ic('lock')}India data residency</span></div></div>
     <div class="show"><div class="tabs3" role="tablist" aria-label="Product preview">${HTABS.map((t, i) => `<button role="tab" aria-selected="${S.heroTab === i}" data-htab="${i}">${t}</button>`).join('')}</div>
       <div id="hpanel">${heroPanel(S.heroTab)}</div>
-      <div class="float2 f1">${ic('bolt')}Revoked · 2.6 s</div><div class="float2 f2">${ic('check')}Hash verified</div>
       <div class="hnote">Interactive preview · sample data</div></div></div>
     <div class="cstrip"><div class="wrap">${[[2.6, ' s', 'median revocation reach (design target under 5 s)', 1], [9, '', 'DPDP duties tracked, s.5 to s.14', 0], [22, '', 'scheduled Indian languages planned', 0], [250, ' cr', 'highest penalty under the Act, ₹', 0]].map(c => `<div class="c"><div class="n"><span class="cnt" data-to="${c[0]}" data-d="${c[3]}" data-suf="${c[1]}">${c[0]}${c[1]}</span></div><div class="l">${c[2]}</div></div>`).join('')}</div></div></section>
   <section class="sect" id="why"><div class="wrap rv"><div class="eyebrow">Why now</div><h2>The law is here. Most consent screens are not ready.</h2>

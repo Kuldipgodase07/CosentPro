@@ -232,7 +232,6 @@ export function landing() {
             <span>${ic('shield')}DPDP Act 2023</span>
             <span>${ic('globe')}GDPR aligned</span>
             <span>${ic('lock')}India data residency</span>
-            <span>${ic('ledger')}Hash-chained audit</span>
           </div>
         </div>
 
@@ -241,8 +240,6 @@ export function landing() {
             ${HTABS.map((t, i) => `<button role="tab" aria-selected="${S.heroTab === i}" data-htab="${i}">${t}</button>`).join('')}
           </div>
           <div id="hpanel">${heroPanel(S.heroTab)}</div>
-          <div class="float2 f1">${ic('bolt')}Revoked · 2.6 s</div>
-          <div class="float2 f2">${ic('check')}Hash verified</div>
           <div class="hnote">Interactive preview · sample data</div>
         </div>
       </div>
