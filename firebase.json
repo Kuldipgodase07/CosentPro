@@ -1,4 +1,8 @@
 {
+  "firestore": {
+    "rules": "ConsentPro_Firebase_Package/consentpro-firebase/firestore.rules",
+    "indexes": "ConsentPro_Firebase_Package/consentpro-firebase/firestore.indexes.json"
+  },
   "hosting": {
     "public": "ConsentPro_Firebase_Package/consentpro-firebase/public",
     "ignore": [

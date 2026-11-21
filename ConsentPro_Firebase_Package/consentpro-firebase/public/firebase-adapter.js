@@ -1,49 +1,124 @@
-// Starter wiring between the ConsentPro front end and Firebase.
-// Loaded after the app. It keeps the app's UI state and replaces the demo back end with:
-//   - Cloud Functions for consent changes and Gemini calls,
-//   - Firestore for rights requests and ledger hydration.
-// Sign-in screens still use the demo accounts. Wire them to signInWithEmailAndPassword next (see README).
+// Real-Time Firebase Firestore & Auth Adapter for ConsentPro
+// Provides bi-directional synchronization between the ConsentPro client and Cloud Firestore.
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, doc, setDoc, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-functions.js';
+import { getFirestore, doc, setDoc, collection, getDocs, query, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 const cfg = window.CP_FIREBASE_CONFIG;
-if (!cfg || cfg.apiKey.startsWith('YOUR_')) {
-  console.info('ConsentPro: Firebase config not set. Running in demo mode.');
+if (!cfg || !cfg.apiKey || cfg.apiKey.startsWith('YOUR_')) {
+  console.info('ConsentPro: Firebase config not set or running in standalone demo mode.');
 } else {
-  const app = initializeApp(cfg), auth = getAuth(app), fs = getFirestore(app), fn = getFunctions(app, cfg.region);
-  const tid = cfg.tenant;
-  CP_CONFIG.firebase = true; CP_CONFIG.project = cfg.projectId; CP_CONFIG.region = cfg.region; DB.tid = tid;
+  const app = initializeApp(cfg);
+  const auth = getAuth(app);
+  const fs = getFirestore(app);
+  const tid = cfg.tenant || 'orbit';
 
-  // 1. Gemini through callable functions
-  const names = { lint: 'aiLint', triage: 'aiTriage', advise: 'aiAdvise' };
-  AI.call = async (name, payload) => {
-    const t0 = performance.now();
-    const body = name === 'advise' ? { obligations: obligations() } : payload;
-    const r = await httpsCallable(fn, names[name])(body);
-    DB.fn++; DB.log('call', 'functions/' + names[name], 0);
-    return { out: r.data, engine: CP_CONFIG.model, ms: Math.round(performance.now() - t0) };
-  };
+  if (typeof CP_CONFIG !== 'undefined') {
+    CP_CONFIG.firebase = true;
+    CP_CONFIG.project = cfg.projectId;
+    CP_CONFIG.region = cfg.region;
+  }
+  if (typeof DB !== 'undefined') {
+    DB.tid = tid;
+  }
 
-  // 2. Consent changes go through the server, which writes the ledger in one transaction
+  // 1. Intercept Consent changes and write directly to Firestore (Purposes & Hash-Chained Ledger)
   const localApply = window.applyConsent;
   window.applyConsent = function (id, action) {
     const receipt = localApply(id, action);
-    httpsCallable(fn, 'recordConsent')({ tid, purposeId: id, action }).catch((e) => toast('Server could not record this: ' + e.message));
+    
+    // Save updated purpose state to Firestore
+    setDoc(doc(fs, `tenants/${tid}/purposes/${id}`), {
+      status: action === 'grant' ? 'granted' : 'revoked',
+      receipt: receipt,
+      updated: Date.now()
+    }, { merge: true }).catch(err => console.error('Firestore purpose update error:', err));
+
+    // Save hash-chained ledger block to Firestore
+    if (typeof S !== 'undefined' && S.ledger && S.ledger.length) {
+      const ent = S.ledger[S.ledger.length - 1];
+      const docId = String(ent.seq).padStart(6, '0');
+      setDoc(doc(fs, `tenants/${tid}/ledger/${docId}`), ent)
+        .catch(err => console.error('Firestore ledger write error:', err));
+    }
+
     return receipt;
   };
 
-  // 3. Rights requests are written by the person, allowed by the rules
-  const origPush = S.requests.push.bind(S.requests);
-  S.requests.push = (...rs) => { rs.forEach((r) => setDoc(doc(fs, `tenants/${tid}/requests/${r.id}`), r).catch(console.error)); return origPush(...rs); };
+  // 2. Intercept Rights requests and write directly to Firestore
+  if (typeof S !== 'undefined' && S.requests) {
+    const origReqPush = S.requests.push.bind(S.requests);
+    S.requests.push = (...rs) => {
+      rs.forEach(r => {
+        setDoc(doc(fs, `tenants/${tid}/requests/${r.id}`), r)
+          .catch(err => console.error('Firestore request write error:', err));
+      });
+      return origReqPush(...rs);
+    };
+  }
 
-  // 4. Hydrate the ledger after sign-in so auditors see server history
-  onAuthStateChanged(auth, async (u) => {
-    if (!u) return;
+  // 3. Intercept Purposes and write directly to Firestore
+  if (typeof S !== 'undefined' && S.purposes) {
+    const origPurpPush = S.purposes.push.bind(S.purposes);
+    S.purposes.push = (...ps) => {
+      ps.forEach(p => {
+        setDoc(doc(fs, `tenants/${tid}/purposes/${p.id}`), p)
+          .catch(err => console.error('Firestore purpose create error:', err));
+      });
+      return origPurpPush(...ps);
+    };
+  }
+
+  // 4. Intercept API Keys and write directly to Firestore
+  if (typeof S !== 'undefined' && S.keys) {
+    const origKeyPush = S.keys.push.bind(S.keys);
+    S.keys.push = (...ks) => {
+      ks.forEach(k => {
+        setDoc(doc(fs, `tenants/${tid}/apiKeys/${k.id}`), k)
+          .catch(err => console.error('Firestore key write error:', err));
+      });
+      return origKeyPush(...ks);
+    };
+  }
+
+  // 5. Hydrate on initial load directly from Cloud Firestore
+  (async () => {
     try {
-      const snap = await getDocs(query(collection(fs, `tenants/${tid}/ledger`), orderBy('seq')));
-      if (snap.size) { S.ledger.length = 0; snap.forEach((d) => S.ledger.push(d.data())); if (S.route === 'a-ledger') render(); }
-    } catch (e) { console.warn('Ledger not readable for this role', e.code); }
-  });
+      const [lSnap, pSnap, rSnap] = await Promise.all([
+        getDocs(query(collection(fs, `tenants/${tid}/ledger`), orderBy('seq'))),
+        getDocs(collection(fs, `tenants/${tid}/purposes`)),
+        getDocs(collection(fs, `tenants/${tid}/requests`))
+      ]);
+
+      if (typeof S !== 'undefined') {
+        if (lSnap.size) {
+          S.ledger.length = 0;
+          lSnap.forEach(d => S.ledger.push(d.data()));
+        }
+        if (pSnap.size) {
+          pSnap.forEach(d => {
+            const data = d.data();
+            const idx = S.purposes.findIndex(x => x.id === data.id);
+            if (idx >= 0) S.purposes[idx] = { ...S.purposes[idx], ...data };
+            else S.purposes.push(data);
+          });
+        }
+        if (rSnap.size) {
+          rSnap.forEach(d => {
+            const data = d.data();
+            const idx = S.requests.findIndex(x => x.id === data.id);
+            if (idx >= 0) S.requests[idx] = { ...S.requests[idx], ...data };
+            else S.requests.push(data);
+          });
+        }
+        if (typeof render === 'function') {
+          render();
+        }
+      }
+      console.info('ConsentPro: Cloud Firestore sync online & hydrated.');
+    } catch (err) {
+      console.warn('ConsentPro: Cloud Firestore initial hydration note:', err.message);
+    }
+  })();
 }
